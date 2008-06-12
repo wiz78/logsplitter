@@ -1,0 +1,109 @@
+LogSplitter                http://sourceforge.net/projects/logsplitter/
+
+
+What is it?
+===========
+
+LogSplitter is a log handler for Apache which combines the features of rotatelogs,
+splitlog and (in part) cronolog.
+
+LogSplitter allows to process all your virtual hosts logs with a single instance 
+of the program, but keeping the benefits of having separate log files which don't
+need further splitting.
+
+Also, your log files will be periodically rotated and a post-rotate command can
+be invoked automatically.
+
+
+Who did it?
+===========
+
+Simone Tellini, <tellini@users.sourceforge.net>
+http://tellini.info/
+
+
+Show your support
+=================
+
+If you use this software in a production environment and/or you wish to show 
+your support, you can get me something off one of the Amazon wish-lists of 
+mine, located at 
+
+http://www.amazon.co.uk/exec/obidos/registry/1K4OWZ581SIRE/ref%3Dwl%5Fs%5F3/026-2575462-0900418
+
+or
+
+http://www.amazon.com/gp/registry/4HTWP4885GSB/102-7143304-5385735
+
+
+Requirements
+============
+
+ - GCC 3.4
+
+
+Installation
+============
+
+"./configure; make install" should compile and install the logsplitter executable
+in your bin directory. 
+
+You also need to create a directory to store the state file. For instance:
+
+    mkdir /var/run/logsplitter
+    chown www.www /var/run/logsplitter
+    chmod 0750 /var/run/logsplitter
+
+(assuming that you run Apache as user www, group www)
+
+
+Usage
+=====
+
+LogSplitter is meant to be used as a piped log in the main Apache configuration.
+It expects the virtual host to be the first token of log lines. This can be 
+achieved with the following Apache directives, for instance:
+
+	LogFormat "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" combined_vhost
+	CustomLog "|/usr/local/bin/logsplitter /etc/logsplitter.ini" combined_vhost
+
+You need to pass the name of the config file to use on the command line. 
+An example configuration file is shown below:
+
+
+                              ---8<---8<---
+[General]
+; credentials for the process. This user/group must have write access to the 
+; logs directory
+User   		= www
+Group		= www
+; where to save the state file
+StateFile	= /var/run/logsplitter/state.ini
+
+[DefaultLog]
+; where to log lines of hosts which aren't defined elsewhere in this file
+; if omitted, those lines will be ignored
+Path   		= /var/log/www/access_log
+;
+; rotation period. Unit can be "days", "hours" or "seconds" (without quotes)
+;Period      = <value> <unit>
+; default value is:
+Period      = 1 days
+;
+; if specified, this will be launched after the rotation of the log.
+; %f will be replaced with the old log file, %h with the host name
+PostRotate	= /path/to/script %f
+
+[Host www.test.com]
+Path 		= /var/log/www/www.test.com-access_log
+Period		= 2 hours
+; assuming that logminer.ini defines the path for www.test.com as
+; /var/log/www/www.test.com-access_log.old
+PostRotate	= /usr/local/bin/logminer /etc/logminer.ini %h
+                              ---8<---8<---
+
+
+After editing the configuration, you need to restart apache (at least using
+"apachectl graceful").
+
+In case you're wondering what's logminer, browse to http://logminer.sourceforge.net/
