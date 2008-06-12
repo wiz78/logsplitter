@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## $Id: Makefile.am,v 1.1.1.1 2008-06-12 17:06:34 tellini Exp $
+## $Id: Makefile.am,v 1.2 2008-06-12 17:13:48 tellini Exp $
 
 auxdir			= @ac_aux_dir@
 AUX_DIST		= $(auxdir)/install-sh $(auxdir)/missing \

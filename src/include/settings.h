@@ -1,5 +1,5 @@
 /***************************************************************************
-	revision             : $Id: settings.h,v 1.1.1.1 2008-06-12 17:06:47 tellini Exp $
+	revision             : $Id: settings.h,v 1.2 2008-06-12 17:13:48 tellini Exp $
     copyright            : (C) 2005 by Simone Tellini
     email                : tellini@users.sourceforge.net
  ***************************************************************************/
